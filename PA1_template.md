@@ -1,15 +1,11 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 ## Loading and preprocessing the data
 
 Firstly, data are loaded from the working directory.
 
-```{r}
+
+```r
 data <- read.csv("activity.csv")
 ```
 The data do not need to be processed further.
@@ -18,19 +14,32 @@ The data do not need to be processed further.
 
 A histogram of the total number of steps taken each day is as follows:
 
-```{r}
+
+```r
 daysum <- with(data,tapply(steps,date,sum,na.rm=TRUE))
 hist(daysum)
 ```
+
+![](./PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
    
 The mean total number of steps taken per day:
-```{r}
+
+```r
 mean(daysum)
 ```
 
+```
+## [1] 9354.23
+```
+
 The median total number of steps taken per day:
-```{r}
+
+```r
 median(daysum)
+```
+
+```
+## [1] 10395
 ```
 
   
@@ -39,7 +48,8 @@ median(daysum)
 Time series of the 5-minute interval (x-axis) and the average number of steps 
 taken, averaged across all days (y-axis):
 
-```{r}
+
+```r
 int.ave <- with(data, aggregate(steps, list(interval=interval), mean,
                                      na.rm = TRUE
                                      )
@@ -50,25 +60,38 @@ with(int.ave, plot(interval, x, type="l", xlab="Interval",
      )
 ```
 
+![](./PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
 The 5-minute interval which contains the maximum average number of steps across 
 all the days in the dataset
 
-```{r}
+
+```r
 int.ave.max <- subset(int.ave, x == max(x))
 int.ave.max$interval
+```
+
+```
+## [1] 835
 ```
   
 ## Imputing missing values
 
 The total number of missing values in the dataset is
-```{r}
+
+```r
 sum(is.na(data))
+```
+
+```
+## [1] 2304
 ```
 
 A way to handle the missing values is to replace a missing value at an interval 
 with the mean of that interval. 
 
-```{r}
+
+```r
 data1 <- data  #duplicate dataset 
 for (i in 1:length(data1$steps)){
         if (is.na(data1$steps[i])) {
@@ -80,19 +103,32 @@ for (i in 1:length(data1$steps)){
 
 A histogram of the total number of steps taken each day is as follows:
 
-```{r}
+
+```r
 daysum1 <- with(data1,tapply(steps,date,sum))
 hist(daysum1)
 ```
+
+![](./PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
    
 The mean total number of steps taken per day:
-```{r}
+
+```r
 mean(daysum1)
 ```
 
+```
+## [1] 10766.19
+```
+
 The median total number of steps taken per day:
-```{r}
+
+```r
 median(daysum1)
+```
+
+```
+## [1] 10766.19
 ```
 
 The mean and the median in this part is higher in those in the second part of
@@ -106,7 +142,8 @@ Firstly, we create a new factor variable in the dataset with two levels -
 "weekday" and "weekend" indicating whether a given date is a weekday or weekend 
 day. 
 
-```{r}
+
+```r
 data1$date <- as.Date(data1$date, format="%Y-%m-%d")
 data1$weekend <- weekdays(data1$date) == "Saturday" | 
                  weekdays(data1$date) == "Sunday"
@@ -117,7 +154,8 @@ Below is a panel plot containing a time series plot of the 5-minute interval
 (x-axis) and the average number of steps taken, averaged across all weekday days
 or weekend days (y-axis).
 
-```{r}
+
+```r
 int.ave.wday <- with(data1[data1$weekend=="weekday",], 
                      aggregate(steps, list(interval=interval), mean)
                      )
@@ -133,7 +171,8 @@ with(int.ave.wend, plot(interval, x, type="l", xlab="Interval",
                         ylab="Average Number of Steps", main="weekend"
                         )
      )
-
 ```
+
+![](./PA1_template_files/figure-html/unnamed-chunk-13-1.png) 
   
 Note that there are different patterns in the activity in weekdays and weekends.
